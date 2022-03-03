@@ -26,34 +26,10 @@
 # NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE,  EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-from setuptools import setup
-from os import path, getenv
+import fileinput
+from os.path import join, dirname
 
-
-def get_requirements(requirements_filename: str):
-    requirements_file = path.join(path.abspath(path.dirname(__file__)), "requirements", requirements_filename)
-    with open(requirements_file, 'r', encoding='utf-8') as r:
-        requirements = r.readlines()
-    requirements = [r.strip() for r in requirements if r.strip() and not r.strip().startswith("#")]
-
-    for i in range(0, len(requirements)):
-        r = requirements[i]
-        if "@" in r:
-            parts = [p.lower() if p.strip().startswith("git+http") else p for p in r.split('@')]
-            r = "@".join(parts)
-            if getenv("GITHUB_TOKEN"):
-                if "github.com" in r:
-                    r = r.replace("github.com", f"{getenv('GITHUB_TOKEN')}@github.com")
-            requirements[i] = r
-    return requirements
-
-
-PLUGIN_ENTRY_POINT = 'neon-g2p-phoneme-guesser-plugin=neon_g2p_phoneme_guesser_plugin:PhonemeGuesserPlugin'
-
-with open("README.md", "r") as f:
-    long_description = f.read()
-
-with open("./version.py", "r", encoding="utf-8") as v:
+with open(join(dirname(__file__), "version.py"), "r", encoding="utf-8") as v:
     for line in v.readlines():
         if line.startswith("__version__"):
             if '"' in line:
@@ -61,20 +37,18 @@ with open("./version.py", "r", encoding="utf-8") as v:
             else:
                 version = line.split("'")[1]
 
+if "a" not in version:
+    parts = version.split('.')
+    parts[-1] = str(int(parts[-1]) + 1)
+    version = '.'.join(parts)
+    version = f"{version}a0"
+else:
+    post = version.split("a")[1]
+    new_post = int(post) + 1
+    version = version.replace(f"a{post}", f"a{new_post}")
 
-setup(
-    name='neon-g2p-phoneme-guesser-plugin',
-    version='0.0.1',
-    description='A utterance2phoneme plugin ovos/neon/mycroft',
-    long_description=long_description,
-    long_description_content_type='text/markdown',
-    url='https://github.com/NeonGeckoCom/g2p-phoneme-guesser-plugin',
-    author='Neongecko',
-    author_email='developers@neon.ai',
-    license='bsd3',
-    packages=['neon_g2p_phoneme_guesser_plugin'],
-    install_requires=get_requirements("requirements.txt"),
-    zip_safe=True,
-    keywords='mycroft plugin utterance phoneme',
-    entry_points={'ovos.plugin.g2p': PLUGIN_ENTRY_POINT}
-)
+for line in fileinput.input(join(dirname(__file__), "version.py"), inplace=True):
+    if line.startswith("__version__"):
+        print(f"__version__ = \"{version}\"")
+    else:
+        print(line.rstrip('\n'))
