@@ -1,2 +1,2 @@
 ovos-plugin-manager~=0.0.3
-phoneme_guesser
+phoneme_guesser~=0.1,>=0.1.1
