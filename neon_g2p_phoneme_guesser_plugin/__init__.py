@@ -20,7 +20,7 @@ class PhonemeGuesserPlugin(Grapheme2PhonemePlugin):
         Returns:
             set: supported languages
         """
-        return {"en"}
+        return {"en", "ca"}
 
 
 # sample valid configurations per language
@@ -29,12 +29,12 @@ class PhonemeGuesserPlugin(Grapheme2PhonemePlugin):
 #       0 - top, 100-bottom
 # all keys represent an example valid config for the plugin
 PhonemeGuesserConfig = {
-    "en-us": [
-        {"lang": "en-us",
-         "display_name": "Phoneme Guesser",
+    l: [
+        {"lang": l,
+         "display_name": f"Phoneme Guesser ({l})",
          "priority": 60,
          "native_alphabet": "ARPA",
          "durations": False,
          "offline": True}
-    ]
+    ] for l in ["en", "ca"]
 }
