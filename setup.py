@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 from setuptools import setup
 
-
 PLUGIN_ENTRY_POINT = 'neon-g2p-phoneme-guesser-plugin=neon_g2p_phoneme_guesser_plugin:PhonemeGuesserPlugin'
+CONFIG_ENTRY_POINT = 'neon-g2p-phoneme_guesser-plugin.config=neon_g2p_phoneme_guesser_plugin:PhonemeGuesserConfig'
 setup(
     name='neon-g2p-phoneme-guesser-plugin',
     version='0.0.1',
@@ -14,5 +14,6 @@ setup(
     packages=['neon_g2p_phoneme_guesser_plugin'],
     zip_safe=True,
     keywords='mycroft plugin utterance phoneme',
-    entry_points={'ovos.plugin.g2p': PLUGIN_ENTRY_POINT}
+    entry_points={'ovos.plugin.g2p': PLUGIN_ENTRY_POINT,
+                  'ovos.plugin.g2p.config': CONFIG_ENTRY_POINT}
 )
